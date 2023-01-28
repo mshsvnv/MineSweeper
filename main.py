@@ -1,11 +1,12 @@
 import tkinter as tk
+from cell import Cell
 import settings as st
-import utils as ut
+import utils as ut 
 
 root = tk.Tk()            # window
 
 # window settings
-root.configure(bg = "light green")  # some features of the window
+root.configure(bg = "light pink")  # some features of the window
 root.geometry(f'{st.WIDTH}x{st.HEIGHT}')  # size of the window
 root.title("Sweeper Game")     # name of the window
 root.resizable(False, False)  # disability of resizable
@@ -37,6 +38,16 @@ center_frame.place(
     x = ut.width_prct(25),
     y = ut.height_prct(25)
 )
+
+for x in range(st.GRID_SIZE):
+    for y in range(st.GRID_SIZE):
+        c = Cell()
+        c.create_btn_object(center_frame)
+        c.cell_btn_object.grid(
+            column = x,
+            row = y
+        )
+
 
 # run the window
 root.mainloop()
