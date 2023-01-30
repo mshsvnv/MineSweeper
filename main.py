@@ -20,6 +20,19 @@ top_frame = tk.Frame(
 )
 top_frame.place(x = 0, y = 0)  # frame location
 
+game_title = tk.Label(
+    top_frame,
+    bg = "light yellow",
+    fg = "#a8e4a0",
+    font = ("", 30, 'bold'),
+    text = "MineSweeper Game"
+)
+
+game_title.place(
+    x = ut.width_prct(25),
+    y = 0
+)
+
 left_frame = tk.Frame(
     root,
     bg = "light blue",
@@ -47,6 +60,14 @@ for x in range(st.GRID_SIZE):
             column = x,
             row = y
         )
+
+# вызываем лэйбл из класса Cell
+Cell.create_cell_count_label(left_frame)
+
+Cell.cell_count_label_object.place(
+    x = 0,
+    y = 0
+)
 
 Cell.randomize_mines()
 

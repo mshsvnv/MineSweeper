@@ -1,12 +1,17 @@
-from tkinter import Button
+from tkinter import Button, Label, messagebox
 import random as r
 import settings as st
+import ctypes, sys
 class Cell:
 
     all = []
+    cell_count_label_object = None
+    cell_count = st.CELL_COUNT
 
     def __init__(self, x, y, is_mine = False):
         self.is_mine = is_mine
+        self.is_opend = False
+        self.is_mine_candidate = False
         self.cell_btn_object = None
         self.x = x
         self.y = y
@@ -26,11 +31,43 @@ class Cell:
         
         self.cell_btn_object = btn
 
+    @staticmethod
+    def create_cell_count_label(location):
+        lbl = Label(
+            location,
+            bg = "light blue",
+            fg = "#333333",
+            font = ("", 30),
+            text = f"Cells Left: {Cell.cell_count}",
+            width = 12,
+            height = 4
+        )
+
+        Cell.cell_count_label_object = lbl
+
     def left_click_actions(self, event):
+
         if self.is_mine:
             self.show_mine()
         else:
+            if self.surrounded_cells_mines_length == 0:
+                for cell in self.surrounded_cells:
+                    cell.show_cell()
+            
             self.show_cell()
+
+            if Cell.cell_count == st.MINES_COUNT:
+                message = messagebox.showinfo(
+                    title = "Congratulations",
+                    text = "You're the winner!"
+                )
+
+                sys.exit()
+                
+        
+        # нельзя нажать на кнопку повторно
+        self.cell_btn_object.unbind('<Button-1>')
+        self.cell_btn_object.unbind('<Button-3>')
 
     def get_cell_by_axis(self, x, y):
         for cell in Cell.all:
@@ -60,13 +97,44 @@ class Cell:
         return counter
 
     def show_cell(self):
-        print(self.surrounded_cells_mines_length)
+        if not self.is_opend:
+            Cell.cell_count -= 1
+            self.cell_btn_object.configure(text = self.surrounded_cells_mines_length)
+
+            # заменить кол-во оставшихся мин
+            if Cell.cell_count_label_object:
+                Cell.cell_count_label_object.configure(
+                    text = f"Cells Left: {Cell.cell_count}"
+                )
+            
+            self.cell_btn_object.configure(
+                bg = "SystemButtonFace"
+            )
+
+        # открыта ли мина
+        self.is_opend = True
 
     def show_mine(self):
-        self.cell_btn_object.configure(bg = 'magenta')
+        self.cell_btn_object.configure(bg = '#d53032')
+
+        message = messagebox.showerror(
+            title = "Game Over!",
+            message = "You clicked on a mine!"
+        )
+
+        sys.exit()
 
     def right_click_actions(self, event):
-        print('I am righter!')
+        if not self.is_mine_candidate:
+            self.cell_btn_object.configure(
+                bg = '#fcdd76'
+            )
+            self.is_mine_candidate = True
+        else:
+            self.cell_btn_object.configure(
+                bg = 'SystemButtonFace'
+            )
+            self.is_mine_candidate = False
 
     @staticmethod
     def randomize_mines():
