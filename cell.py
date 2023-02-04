@@ -59,7 +59,7 @@ class Cell:
             if Cell.cell_count == st.MINES_COUNT:
                 message = messagebox.showinfo(
                     title = "Congratulations",
-                    text = "You're the winner!"
+                    message = "You're the winner!"
                 )
 
                 sys.exit()
